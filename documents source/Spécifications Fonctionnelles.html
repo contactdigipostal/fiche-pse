@@ -1,0 +1,339 @@
+cahier des charges<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cahier des charges – Application Fiche Bilan PSE2 SSIAP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --primary: #004080;
+      --secondary: #0066cc;
+      --bg: #f4f6f8;
+      --border: #d0d4dc;
+      --text: #222;
+      --muted: #666;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    header {
+      background: var(--primary);
+      color: #fff;
+      padding: 1.2rem 1.5rem;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.4rem;
+    }
+    header p {
+      margin: 0.2rem 0 0;
+      font-size: 0.9rem;
+      color: #e0e6f0;
+    }
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 2.5rem;
+    }
+    section {
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      padding: 1rem 1.2rem;
+      margin-bottom: 1rem;
+    }
+    h2 {
+      margin: 0 0 0.6rem;
+      font-size: 1.2rem;
+      color: var(--primary);
+      border-left: 4px solid var(--secondary);
+      padding-left: 0.4rem;
+    }
+    h3 {
+      margin: 0.8rem 0 0.2rem;
+      font-size: 1.02rem;
+      color: var(--secondary);
+    }
+    p {
+      margin: 0.2rem 0 0.4rem;
+      font-size: 0.95rem;
+    }
+    ul, ol {
+      margin: 0.2rem 0 0.6rem 1.2rem;
+      padding: 0;
+      font-size: 0.95rem;
+    }
+    li { margin: 0.1rem 0; }
+    .tagline {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin: 0.3rem 0 0.6rem;
+    }
+    .chip {
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 0.8rem;
+      background: #f9fafc;
+      color: var(--muted);
+    }
+    .two-cols {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .two-cols > div {
+      flex: 1 1 260px;
+    }
+    .meta {
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+    code {
+      font-family: "JetBrains Mono", Menlo, Consolas, monospace;
+      font-size: 0.82rem;
+      background: #f0f2f5;
+      padding: 0 0.2rem;
+      border-radius: 3px;
+    }
+    .highlight {
+      background: #fff8e1;
+      border-left: 3px solid #ffb300;
+      padding: 0.4rem 0.6rem;
+      margin: 0.4rem 0 0.6rem;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Application Fiche Bilan PSE2 – Agents SSIAP</h1>
+  <p>Cahier des charges fonctionnel et technique (version de travail)</p>
+</header>
+
+<main>
+
+  <!-- 1. Contexte et objectifs -->
+  <section id="contexte">
+    <h2>1. Contexte et objectifs</h2>
+    <p>
+      Développer une application légère, utilisable principalement sur smartphone par des agents SSIAP,
+      permettant de remplir une fiche bilan PSE (PSE1/PSE2) complète, conforme au référentiel
+      du Ministère de l’Intérieur (PSE 2024), avec assistance IA optionnelle.
+    </p>
+    <p class="tagline">
+      Objectif : remplacer/améliorer la fiche papier en restant simple, rapide et adaptée au terrain.
+    </p>
+    <div class="chips">
+      <span class="chip">Public cible : agents SSIAP</span>
+      <span class="chip">Support principal : smartphone Android</span>
+      <span class="chip">Usage en intervention</span>
+      <span class="chip">Mode offline prioritaire</span>
+    </div>
+  </section>
+
+  <!-- 2. Portée fonctionnelle -->
+  <section id="portee">
+    <h2>2. Portée fonctionnelle</h2>
+
+    <h3>2.1. Ce que l’application doit permettre</h3>
+    <ul>
+      <li>Remplir une <strong>fiche bilan PSE1/PSE2 complète</strong>, structurée par sections :
+        cadre intervention, bilan vital (primaire), gestes effectués, bilan complémentaire, transmission.</li>
+      <li>Générer un <strong>document PDF</strong> récapitulatif, exportable / partageable
+        (impression, email professionnel, stockage).</li>
+      <li>Fonctionner <strong>entièrement hors ligne</strong> pour la saisie et la consultation des fiches.</li>
+      <li>Proposer, lorsque réseau disponible, une <strong>aide IA optionnelle</strong> :
+        correction d’orthographe, reformulation professionnelle, rappel de gestes PSE2.</li>
+    </ul>
+
+    <h3>2.2. Ce que l’application ne doit pas faire</h3>
+    <ul>
+      <li>Aucun diagnostic médical, aucune décision thérapeutique autonome.</li>
+      <li>Aucune proposition de geste ou de conduite à tenir sortant du
+        <strong>Référentiel PSE 2024 du Ministère de l’Intérieur</strong>.</li>
+      <li>Pas d’obligation de compte utilisateur ou d’authentification pour les agents sur le terrain.</li>
+    </ul>
+  </section>
+
+  <!-- 3. Structure de la fiche PSE -->
+  <section id="fiche">
+    <h2>3. Structure de la fiche PSE</h2>
+
+    <h3>3.1. Sections principales</h3>
+    <ol>
+      <li><strong>Cadre de l’intervention</strong></li>
+      <li><strong>Bilan vital (bilan primaire)</strong></li>
+      <li><strong>Gestes effectués (PSE)</strong></li>
+      <li><strong>Bilan complémentaire</strong></li>
+      <li><strong>Transmission</strong></li>
+    </ol>
+
+    <div class="two-cols">
+      <div>
+        <h3>3.2. Cadre de l’intervention</h3>
+        <ul>
+          <li>Date / heure de l’intervention.</li>
+          <li>Lieu (site, bâtiment, niveau, zone).</li>
+          <li>Numéro d’intervention interne (optionnel).</li>
+          <li>Équipe / agent SSIAP.</li>
+          <li>Type d’événement (malaise, traumatisme, ACR, brûlure, autre).</li>
+        </ul>
+      </div>
+      <div>
+        <h3>3.3. Bilan vital (primaire)</h3>
+        <ul>
+          <li>Conscience (échelle de type AVPU ou équivalent).</li>
+          <li>Respiration : FR, qualité (normale, bruyante, laborieuse…).</li>
+          <li>Circulation : FC, SpO₂ (si disponible), couleur, hémorragies massives.</li>
+          <li>Observation rapide (posture, détresse apparente…).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="two-cols">
+      <div>
+        <h3>3.4. Gestes effectués (PSE)</h3>
+        <ul>
+          <li>Protection / sécurisation des lieux.</li>
+          <li>Alerte / demande de renforts.</li>
+          <li>Bilan vital complet.</li>
+          <li>DVAE, RCP, arrêt d’hémorragie, PLS, immobilisation, oxygénothérapie…</li>
+          <li>Zone texte pour détails chronologiques des gestes.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>3.5. Bilan complémentaire et transmission</h3>
+        <ul>
+          <li>Âge approximatif, sexe.</li>
+          <li>Antécédents, traitements, allergies (connus).</li>
+          <li>Observations complémentaires.</li>
+          <li>Transmis à (VSAV/SDIS, SMUR, médecin, service interne).</li>
+          <li>Heure de transmission et résumé transmis.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="highlight">
+      Les libellés, options de menus et cases à cocher doivent rester alignés sur le
+      Référentiel PSE 2024 du Ministère de l’Intérieur (vocabulaire et logique de bilan).
+    </div>
+  </section>
+
+  <!-- 4. Exigences IA -->
+  <section id="ia">
+    <h2>4. Exigences liées à l’IA</h2>
+
+    <h3>4.1. Rôle de l’IA</h3>
+    <ul>
+      <li><strong>Correction d’orthographe / grammaire</strong> des champs texte libre.</li>
+      <li><strong>Reformulation</strong> en langage professionnel PSE (phrases claires, neutres, factuelles).</li>
+      <li><strong>Rappel de gestes PSE</strong> possibles, mais toujours à valider par l’agent.</li>
+    </ul>
+
+    <h3>4.2. Mode dégradé sans IA</h3>
+    <ul>
+      <li>L’application doit rester entièrement fonctionnelle sans IA (remplissage + PDF).</li>
+      <li>En cas d’absence de réseau ou d’endpoint IA, un message simple est affiché : 
+        “IA indisponible (mode hors ligne)”.</li>
+      <li>Aucune dépendance IA pour la sauvegarde ou l’export de la fiche.</li>
+    </ul>
+
+    <h3>4.3. Conformité au référentiel PSE</h3>
+    <p>Le comportement de l’IA doit être strictement cadré par un prompt système :</p>
+    <ul>
+      <li>Référence explicite au Référentiel PSE 2024 du Ministère de l’Intérieur.</li>
+      <li>Interdiction de proposer des gestes ou conduites hors référentiel.</li>
+      <li>Pas de diagnostic médical, uniquement aide à la rédaction et rappel de gestes PSE.</li>
+    </ul>
+  </section>
+
+  <!-- 5. Plateforme, offline, légèreté -->
+  <section id="plateforme">
+    <h2>5. Plateforme, offline et légèreté</h2>
+
+    <h3>5.1. Plateforme cible</h3>
+    <ul>
+      <li>Smartphone Android en priorité (PWA ou app web responsive).</li>
+      <li>Utilisable sur tablette ou navigateur desktop (même code). </li>
+      <li>Pas d’installation lourde, pas de dépendance à un PC local pour fonctionner.</li>
+    </ul>
+
+    <h3>5.2. Mode offline</h3>
+    <ul>
+      <li>Saisie de fiche possible sans connexion réseau.</li>
+      <li>Sauvegarde locale des brouillons (par ex. <code>localStorage</code> ou IndexedDB).</li>
+      <li>PDF générable même hors ligne (ou via un module client side).</li>
+    </ul>
+
+    <h3>5.3. Légèreté</h3>
+    <ul>
+      <li>Pas de modèle IA de plusieurs Go embarqué dans l’application.</li>
+      <li>La correction de frappe de base repose sur le <strong>clavier Android / navigateur</strong> (spellcheck natif).</li>
+      <li>L’IA avancée est appelée uniquement via réseau (4G/Wi‑Fi), de manière optionnelle.</li>
+    </ul>
+  </section>
+
+  <!-- 6. Architecture IA externe -->
+  <section id="arch-ia">
+    <h2>6. Architecture IA externe (principe)</h2>
+
+    <h3>6.1. Principe général</h3>
+    <ul>
+      <li>L’application côté client (PWA) contient uniquement l’interface et la logique de fiche.</li>
+      <li>Lorsque l’agent demande une aide IA :
+        <ul>
+          <li>Le texte est éventuellement <strong>anonymisé</strong> (pas de nom, pas d’adresse complète).</li>
+          <li>Envoyé à un <strong>endpoint IA externe</strong> (modèle open source, gratuit si possible).</li>
+          <li>La réponse (texte corrigé / reformulé) est affichée et doit être validée par l’agent.</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h3>6.2. Contraintes sur l’endpoint IA</h3>
+    <ul>
+      <li>Basé sur des modèles <strong>open source</strong> (Qwen, Llama, DeepSeek…).</li>
+      <li>Accès via 4G/Wi‑Fi, <strong>sans identification côté agent</strong> (pas de compte personnel à gérer).</li>
+      <li>La configuration (éventuelle clé API) est gérée par l’admin / développeur, pas par l’utilisateur final.</li>
+    </ul>
+  </section>
+
+  <!-- 7. Synthèse et priorités -->
+  <section id="priorites">
+    <h2>7. Synthèse des priorités</h2>
+    <h3>7.1. Priorités fonctionnelles</h3>
+    <ol>
+      <li>Fiche bilan PSE complète, conforme PSE 2024, simple à remplir.</li>
+      <li>Fonctionnement offline + sauvegarde locale + génération PDF.</li>
+      <li>Interface claire, adaptée à l’usage en intervention.</li>
+      <li>IA comme aide optionnelle (corriger, reformuler, rappeler des gestes PSE).</li>
+    </ol>
+
+    <h3>7.2. Priorités techniques</h3>
+    <ol>
+      <li>Application légère (PWA / web app responsive).</li>
+      <li>Utilisation des correcteurs natifs (clavier, spellcheck navigateur) pour la frappe.</li>
+      <li>Endpoint IA externe open source, sans contrainte pour l’agent, avec cadrage fort du prompt.</li>
+    </ol>
+
+    <p class="meta">
+      Ce document peut servir de base à la conception UI/UX, au choix de technologies (PWA, backend IA)
+      et à la validation réglementaire interne (conformité PSE / données personnelles).
+    </p>
+  </section>
+
+</main>
+</body>
+</html>

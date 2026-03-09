@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Prototype – Fiche Bilan PSE2 SSIAP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --primary: #004080;
+      --secondary: #0066cc;
+      --bg: #f4f6f8;
+      --border: #d0d4dc;
+      --text: #222;
+      --muted: #666;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    header {
+      background: var(--primary);
+      color: #fff;
+      padding: 0.9rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.05rem;
+    }
+    header span {
+      font-size: 0.8rem;
+      color: #dfe6f0;
+    }
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0.8rem 0.6rem 1.8rem;
+    }
+    .tabs {
+      display: flex;
+      gap: 0.1rem;
+      padding: 0;
+      margin: 0 0 0.6rem;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 0.5rem 0.2rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      background: #e9edf2;
+      border: none;
+      border-radius: 6px 6px 0 0;
+      white-space: nowrap;
+    }
+    .tab.active {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-bottom: 1px solid #fff;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .screen {
+      display: none;
+      background: #fff;
+      border-radius: 0 0 8px 8px;
+      border: 1px solid var(--border);
+      padding: 0.8rem 1rem 1rem;
+    }
+    .screen.active {
+      display: block;
+    }
+    fieldset {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 0.8rem;
+      padding: 0.7rem 0.9rem;
+    }
+    legend {
+      padding: 0 0.3rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    label {
+      display: block;
+      font-size: 0.86rem;
+      margin-top: 0.4rem;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 0.35rem;
+      margin-top: 0.15rem;
+      border-radius: 4px;
+      border: 1px solid #c9ccd2;
+      font-size: 0.86rem;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+    .row {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .row > div {
+      flex: 1;
+    }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.3rem;
+    }
+    .chip {
+      padding: 0.2rem 0.45rem;
+      border-radius: 999px;
+      border: 1px solid #ccd1da;
+      background: #f7f9fc;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+    .chip input {
+      margin-right: 0.15rem;
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-top: 0.8rem;
+    }
+    button {
+      padding: 0.5rem 0.8rem;
+      font-size: 0.86rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
+    .primary-btn {
+      background: var(--secondary);
+      color: #fff;
+      font-weight: 600;
+      flex: 1;
+    }
+    .secondary-btn {
+      background: #eeeeee;
+      color: #333;
+      border: 1px solid #d0d4dc;
+      flex: 1;
+    }
+    .footer-actions {
+      margin-top: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .info {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.05rem 0.35rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      background: #fff8e1;
+      color: #795548;
+      border: 1px solid #ffe082;
+      margin-left: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Fiche Bilan PSE2 – Prototype</h1>
+  <span id="statusMode">Mode hors ligne / IA non connectée</span>
+</header>
+
+<main>
+  <!-- Onglets -->
+  <div class="tabs">
+    <button class="tab active" data-screen="s1">1. Cadre</button>
+    <button class="tab" data-screen="s2">2. Bilan vital</button>
+    <button class="tab" data-screen="s3">3. Gestes PSE</button>
+    <button class="tab" data-screen="s4">4. Bilan compl.</button>
+    <button class="tab" data-screen="s5">5. Transmission / PDF</button>
+  </div>
+
+  <form id="fichePseForm">
+    <!-- Écran 1 -->
+    <div id="s1" class="screen active">
+      <fieldset>
+        <legend>1. Cadre de l’intervention</legend>
+
+        <label>Date / heure de l’intervention
+          <input type="datetime-local" name="date_heure" />
+        </label>
+
+        <div class="row">
+          <div>
+            <label>Lieu (site / bâtiment / zone)
+              <input type="text" name="lieu" spellcheck="true" />
+            </label>
+          </div>
+          <div>
+            <label>N° intervention interne
+              <input type="text" name="numero" />
+            </label>
+          </div>
+        </div>
+
+        <label>Équipe / agent SSIAP
+          <input type="text" name="agent" spellcheck="true" />
+        </label>
+
+        <label>Type d’événement
+          <select name="type_evenement">
+            <option value="">Sélectionner…</option>
+            <option>Malaise</option>
+            <option>Traumatisme</option>
+            <option>Arrêt cardio-respiratoire</option>
+            <option>Brûlure</option>
+            <option>Autre</option>
+          </select>
+        </label>
+      </fieldset>
+
+      <div class="nav-buttons">
+        <button type="button" class="secondary-btn" disabled>Précédent</button>
+        <button type="button" class="primary-btn" data-next="s2">Suivant</button>
+      </div>
+    </div>
+
+    <!-- Écran 2 -->
+    <div id="s2" class="screen">
+      <fieldset>
+        <legend>2. Bilan vital (bilan primaire)</legend>
+
+        <div class="row">
+          <div>
+            <label>Conscience
+              <select name="conscience">
+                <option value="">Sélectionner…</option>
+                <option>Conscient</option>
+                <option>Répond à la voix</option>
+                <option>Répond à la douleur</option>
+                <option>Aucun</option>
+              </select>
+            </label>
+          </div>
+          <div>
+            <label>Hémorragie ext. massive ?
+              <select name="hemorragie">
+                <option value="">Sélectionner…</option>
+                <option>Oui</option>
+                <option>Non</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>FR (resp./min)
+              <input type="number" name="fr" min="0" />
+            </label>
+          </div>
+          <div>
+            <label>FC (pouls/min)
+              <input type="number" name="fc" min="0" />
+            </label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>SpO₂ (%)
+              <input type="number" name="spo2" min="0" max="100" />
+            </label>
+          </div>
+          <div>
+            <label>Autres constantes (TA…)
+              <input type="text" name="constantes_autres" spellcheck="true" />
+            </label>
+          </div>
+        </div>
+
+        <label>Observation rapide (respiration, couleur, posture…)
+          <textarea name="obs_rapide" spellcheck="true"></textarea>
+        </label>
+      </fieldset>
+
+      <div class="nav-buttons">
+        <button type="button" class="secondary-btn" data-prev="s1">Précédent</button>
+        <button type="button" class="primary-btn" data-next="s3">Suivant</button>
+      </div>
+    </div>
+
+    <!-- Écran 3 -->
+    <div id="s3" class="screen">
+      <fieldset>
+        <legend>3. Gestes effectués (PSE)</legend>
+
+        <div class="chips">
+          <label class="chip"><input type="checkbox" name="gestes" value="Protection / sécurité" />Protection / sécurité</label>
+          <label class="chip"><input type="checkbox" name="gestes" value="Alerte / renforts" />Alerte / renforts</label>
+          <label class="chip"><input type="checkbox" name="gestes" value="Bilan vital complet" />Bilan vital complet</label>
+          <label class="chip"><input type="checkbox" name="gestes" value="DVAE" />DVAE</label>
+          <label class="chip"><input type="checkbox" name="gestes" value="RCP" />RCP</label>
+          <label class="chip"><input type="checkbox" name="gestes" value="Arrêt hémorragie" />Arrêt hémorragie</label>
+          <label class="chip"><input type="checkbox" name="gestes" value="PLS" />PLS</label>
+          <label class="chip"><input type="checkbox" name="gestes" value="Immobilisation" />Immobilisation</label>
+          <label class="chip"><input type="checkbox" name="gestes" value="Oxygénothérapie" />Oxygénothérapie</label>
+        </div>
+
+        <label>Détails des gestes et évolution
+          <textarea name="details_gestes" spellcheck="true"></textarea>
+        </label>
+
+        <div class="info">
+          IA (plus tard) : bouton “Améliorer le texte” pour correction / reformulation PSE2.
+          <span class="badge">IA optionnelle</span>
+        </div>
+      </fieldset>
+
+      <div class="nav-buttons">
+        <button type="button" class="secondary-btn" data-prev="s2">Précédent</button>
+        <button type="button" class="primary-btn" data-next="s4">Suivant</button>
+      </div>
+    </div>
+
+    <!-- Écran 4 -->
+    <div id="s4" class="screen">
+      <fieldset>
+        <legend>4. Bilan complémentaire</legend>
+
+        <div class="row">
+          <div>
+            <label>Âge approximatif
+              <input type="number" name="age" min="0" />
+            </label>
+          </div>
+          <div>
+            <label>Sexe
+              <select name="sexe">
+                <option value="">N/A</option>
+                <option>H</option>
+                <option>F</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <label>Antécédents / traitements / allergies
+          <textarea name="atcd" spellcheck="true"></textarea>
+        </label>
+
+        <label>Observations complémentaires
+          <textarea name="obs_compl" spellcheck="true"></textarea>
+        </label>
+
+        <div class="info">
+          IA (plus tard) : bouton “Proposer une formulation PSE2” pour ce bloc.
+          <span class="badge">IA optionnelle</span>
+        </div>
+      </fieldset>
+
+      <div class="nav-buttons">
+        <button type="button" class="secondary-btn" data-prev="s3">Précédent</button>
+        <button type="button" class="primary-btn" data-next="s5">Suivant</button>
+      </div>
+    </div>
+
+    <!-- Écran 5 -->
+    <div id="s5" class="screen">
+      <fieldset>
+        <legend>5. Transmission & PDF</legend>
+
+        <label>Transmis à
+          <select name="transmis_a">
+            <option value="">Sélectionner…</option>
+            <option>VSAV / SDIS</option>
+            <option>SMUR</option>
+            <option>Médecin</option>
+            <option>Service interne</option>
+            <option>Autre</option>
+          </select>
+        </label>
+
+        <div class="row">
+          <div>
+            <label>Heure de transmission
+              <input type="time" name="heure_tx" />
+            </label>
+          </div>
+          <div>
+            <label>Référence de transmission (optionnel)
+              <input type="text" name="ref_tx" />
+            </label>
+          </div>
+        </div>
+
+        <label>Résumé transmis
+          <textarea name="resume_tx" spellcheck="true"></textarea>
+        </label>
+
+        <div class="info">
+          IA (plus tard) : bouton “Aider à formuler le résumé transmis”.
+          <span class="badge">IA optionnelle</span>
+        </div>
+      </fieldset>
+
+      <div class="footer-actions">
+        <button type="button" class="secondary-btn" id="btnSaveLocal">
+          Sauvegarder le brouillon (local)
+        </button>
+        <button type="button" class="primary-btn" id="btnGeneratePdf">
+          Générer PDF (placeholder)
+        </button>
+        <p class="info">
+          Orthographe : utilisez le correcteur du clavier / navigateur (soulignement rouge).
+        </p>
+      </div>
+
+      <div class="nav-buttons">
+        <button type="button" class="secondary-btn" data-prev="s4">Précédent</button>
+        <button type="button" class="secondary-btn" id="btnReset">
+          Nouvelle fiche
+        </button>
+      </div>
+    </div>
+  </form>
+</main>
+
+<script>
+  // === Navigation par onglets ===
+  const tabs = document.querySelectorAll('.tab');
+  const screens = document.querySelectorAll('.screen');
+
+  function showScreen(id) {
+    screens.forEach(s => s.classList.remove('active'));
+    tabs.forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelector(`.tab[data-screen="${id}"]`).classList.add('active');
+  }
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.getAttribute('data-screen');
+      showScreen(target);
+    });
+  });
+
+  document.querySelectorAll('[data-next]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.getAttribute('data-next');
+      showScreen(target);
+    });
+  });
+
+  document.querySelectorAll('[data-prev]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.getAttribute('data-prev');
+      showScreen(target);
+    });
+  });
+
+  // === Sauvegarde locale simple ===
+  const STORAGE_KEY = 'pse2_ssiap_brouillon';
+  const form = document.getElementById('fichePseForm');
+
+  // Charger brouillon si existe
+  window.addEventListener('load', () => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        for (const [name, value] of Object.entries(data)) {
+          const elements = form.elements[name];
+          if (!elements) continue;
+
+          if (elements instanceof RadioNodeList || elements.length > 1) {
+            // Ex : checkboxes "gestes"
+            for (const el of elements) {
+              if (el.type === 'checkbox') {
+                el.checked = Array.isArray(value) && value.includes(el.value);
+              }
+            }
+          } else {
+            elements.value = value;
+          }
+        }
+      } catch (e) {
+        console.error('Erreur chargement brouillon:', e);
+      }
+    }
+
+    // Status mode (simple)
+    const status = document.getElementById('statusMode');
+    if (navigator.onLine) {
+      status.textContent = 'Mode en ligne (IA potentiellement disponible)';
+    } else {
+      status.textContent = 'Mode hors ligne / IA non connectée';
+    }
+  });
+
+  // Sauvegarde
+  document.getElementById('btnSaveLocal').addEventListener('click', () => {
+    const data = {};
+    Array.from(form.elements).forEach(el => {
+      if (!el.name) return;
+
+      if (el.type === 'checkbox' && el.name === 'gestes') {
+        if (!data[el.name]) data[el.name] = [];
+        if (el.checked) data[el.name].push(el.value);
+      } else if (el.type !== 'button' && el.type !== 'submit') {
+        data[el.name] = el.value;
+      }
+    });
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    alert('Brouillon sauvegardé localement.');
+  });
+
+  // Reset / nouvelle fiche
+  document.getElementById('btnReset').addEventListener('click', () => {
+    if (!confirm('Effacer la fiche courante et commencer une nouvelle ?')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    form.reset();
+    showScreen('s1');
+  });
+
+  // Placeholder PDF
+  document.getElementById('btnGeneratePdf').addEventListener('click', () => {
+    alert('Génération PDF à implémenter (client ou backend).');
+  });
+
+  // Spellcheck
+  document.querySelectorAll('textarea, input[type="text"]').forEach(el => {
+    el.setAttribute('spellcheck', 'true');
+  });
+</script>
+</body>
+</html>

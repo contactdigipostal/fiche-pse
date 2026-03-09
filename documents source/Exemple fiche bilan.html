@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fiche Bilan PSE - SSIAP</title>
+
+  <!-- PWA de base (facultatif au début) -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#004080" />
+
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      background: #f4f6f8;
+    }
+    header {
+      background: #004080;
+      color: #fff;
+      padding: 0.8rem 1rem;
+      text-align: center;
+      font-weight: 600;
+    }
+    main {
+      padding: 1rem;
+      max-width: 600px;
+      margin: 0 auto 3rem auto;
+    }
+    fieldset {
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      padding: 0.8rem 1rem;
+      background: #fff;
+    }
+    legend {
+      padding: 0 0.4rem;
+      font-weight: 600;
+    }
+    label {
+      display: block;
+      font-size: 0.9rem;
+      margin-top: 0.4rem;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 0.4rem;
+      margin-top: 0.1rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 0.95rem;
+      box-sizing: border-box;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .row {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .row > div {
+      flex: 1;
+    }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.3rem;
+    }
+    .chip {
+      padding: 0.25rem 0.6rem;
+      border-radius: 16px;
+      border: 1px solid #ccc;
+      background: #f8f9fa;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    .chip input {
+      margin-right: 0.25rem;
+    }
+    button {
+      width: 100%;
+      padding: 0.7rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: none;
+      background: #0066cc;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+    button.secondary {
+      background: #eeeeee;
+      color: #333;
+      border: 1px solid #ccc;
+    }
+    .info {
+      font-size: 0.8rem;
+      color: #555;
+      margin-top: 0.3rem;
+    }
+  </style>
+</head>
+<body>
+  <header>Fiche Bilan PSE – SSIAP</header>
+
+  <main>
+    <form id="fichePseForm">
+      <!-- 1. Cadre intervention -->
+      <fieldset>
+        <legend>1. Cadre de l’intervention</legend>
+        <label>Date / heure
+          <input type="datetime-local" name="date_heure" required />
+        </label>
+        <div class="row">
+          <div>
+            <label>Lieu (site / bâtiment)
+              <input type="text" name="lieu" spellcheck="true" />
+            </label>
+          </div>
+          <div>
+            <label>N° intervention interne
+              <input type="text" name="numero" />
+            </label>
+          </div>
+        </div>
+        <label>Équipe / agent SSIAP
+          <input type="text" name="agent" spellcheck="true" />
+        </label>
+        <label>Type d’événement
+          <select name="type_evenement">
+            <option value="">Sélectionner…</option>
+            <option>Malaise</option>
+            <option>Traumatisme</option>
+            <option>Arrêt cardio-respiratoire</option>
+            <option>Brûlure</option>
+            <option>Autre</option>
+          </select>
+        </label>
+      </fieldset>
+
+      <!-- 2. Bilan vital (bilan primaire) -->
+      <fieldset>
+        <legend>2. Bilan vital (primaire)</legend>
+        <div class="row">
+          <div>
+            <label>Conscience
+              <select name="conscience">
+                <option value="">Sélectionner…</option>
+                <option>Conscient</option>
+                <option>Répond à la voix</option>
+                <option>Répond à la douleur</option>
+                <option>Aucun</option>
+              </select>
+            </label>
+          </div>
+          <div>
+            <label>FR (resp./min)
+              <input type="number" name="fr" min="0" />
+            </label>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>FC (pouls/min)
+              <input type="number" name="fc" min="0" />
+            </label>
+          </div>
+          <div>
+            <label>SpO₂ (%)
+              <input type="number" name="spo2" min="0" max="100" />
+            </label>
+          </div>
+        </div>
+        <label>Hémorragie ext. massive ?
+          <select name="hemorragie">
+            <option value="">Sélectionner…</option>
+            <option>Oui</option>
+            <option>Non</option>
+          </select>
+        </label>
+        <label>Observation rapide (respiration, couleur, posture…)
+          <textarea name="obs_rapide" spellcheck="true"></textarea>
+        </label>
+      </fieldset>
+
+      <!-- 3. Gestes effectués (cases simples) -->
+      <fieldset>
+        <legend>3. Gestes effectués (PSE)</legend>
+        <div class="chips">
+          <label class="chip"><input type="checkbox" name="gestes" value="Protection / sécurité" />Protection / sécurité</label>
+          <label class="chip"><input type="checkbox" name="gestes" value="Alerte / renforts" />Alerte / renforts</label>
+          <label class="chip"><input type="checkbox" name="gestes" value="Bilan vital complet" />Bilan vital complet</label>
+          <label class="chip"><input type="checkbox" name="gestes" value="DVAE" />DVAE</label>
+          <label class="chip"><input type="checkbox" name="gestes" value="RCP" />RCP</label>
+          <label class="chip"><input type="checkbox" name="gestes" value="Arrêt hémorragie" />Arrêt hémorragie</label>
+          <label class="chip"><input type="checkbox" name="gestes" value="PLS" />PLS</label>
+          <label class="chip"><input type="checkbox" name="gestes" value="Immobilisation" />Immobilisation</label>
+          <label class="chip"><input type="checkbox" name="gestes" value="Oxygénothérapie" />Oxygénothérapie</label>
+        </div>
+        <label>Détails des gestes et évolution
+          <textarea name="details_gestes" spellcheck="true"></textarea>
+        </label>
+      </fieldset>
+
+      <!-- 4. Bilan complémentaire -->
+      <fieldset>
+        <legend>4. Bilan complémentaire</legend>
+        <div class="row">
+          <div>
+            <label>Âge (approx.)
+              <input type="number" name="age" min="0" />
+            </label>
+          </div>
+          <div>
+            <label>Sexe
+              <select name="sexe">
+                <option value="">N/A</option>
+                <option>H</option>
+                <option>F</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <label>Antécédents / traitements connus
+          <textarea name="atcd" spellcheck="true"></textarea>
+        </label>
+        <label>Autres observations utiles
+          <textarea name="obs_compl" spellcheck="true"></textarea>
+        </label>
+      </fieldset>
+
+      <!-- 5. Transmission -->
+      <fieldset>
+        <legend>5. Transmission</legend>
+        <label>Transmis à
+          <select name="transmis_a">
+            <option value="">Sélectionner…</option>
+            <option>VSAV / SDIS</option>
+            <option>SMUR</option>
+            <option>Médecin</option>
+            <option>Service interne</option>
+          </select>
+        </label>
+        <label>Heure de transmission
+          <input type="time" name="heure_tx" />
+        </label>
+        <label>Résumé transmis
+          <textarea name="resume_tx" spellcheck="true"></textarea>
+        </label>
+      </fieldset>
+
+      <!-- Boutons -->
+      <button type="button" id="btnSave">Sauvegarder localement</button>
+      <button type="button" class="secondary" id="btnPdf">Générer PDF (à implémenter)</button>
+
+      <p class="info">
+        Orthographe : le correcteur de votre clavier / navigateur est actif (soulignement rouge).
+      </p>
+    </form>
+  </main>
+
+  <script>
+    // Activation du spellcheck navigateur sur tous les textareas (au cas où)
+    document.querySelectorAll('textarea, input[type=\"text\"]').forEach(el => {
+      el.setAttribute('spellcheck', 'true');
+    });
+
+    // Sauvegarde simple dans localStorage (mode offline basique)
+    const form = document.getElementById('fichePseForm');
+    const saveBtn = document.getElementById('btnSave');
+
+    const STORAGE_KEY = 'fiche_pse_draft';
+
+    // Charger brouillon au démarrage
+    window.addEventListener('load', () => {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const data = JSON.parse(saved);
+        for (const [name, value] of Object.entries(data)) {
+          const field = form.elements[name];
+          if (!field) continue;
+
+          if (field.type === 'checkbox') {
+            // gestion plus fine possible
+          } else {
+            field.value = value;
+          }
+        }
+      }
+    });
+
+    saveBtn.addEventListener('click', () => {
+      const data = {};
+      Array.from(form.elements).forEach(el => {
+        if (!el.name) return;
+        if (el.type === 'checkbox' && el.name === 'gestes') {
+          // on gère les gestes à part
+          if (!data[el.name]) data[el.name] = [];
+          if (el.checked) data[el.name].push(el.value);
+        } else if (el.type !== 'button' && el.type !== 'submit') {
+          data[el.name] = el.value;
+        }
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      alert('Brouillon sauvegardé en local (offline).');
+    });
+
+    // TODO: implémenter génération PDF côté client ou via backend
+    document.getElementById('btnPdf').addEventListener('click', () => {
+      alert('Génération PDF à implémenter (client JS ou backend).');
+    });
+  </script>
+</body>
+</html>
