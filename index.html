@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Prototype – Fiche Bilan OCDE </title>
+  <title> – Fiche Bilan OCDE </title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Manifest PWA -->
   <link rel="manifest" href="manifest.webmanifest">
@@ -1021,6 +1021,7 @@
     });
   });
 
+/*
   document.getElementById('btnSaveLocal').addEventListener('click', () => {
     const data = {};
     Array.from(form.elements).forEach(el => {
@@ -1039,6 +1040,7 @@
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     alert('Brouillon sauvegardé localement.');
   });
+*/
 
   document.getElementById('btnReset').addEventListener('click', () => {
     if (!confirm('Effacer la fiche courante et commencer une nouvelle ?')) return;
