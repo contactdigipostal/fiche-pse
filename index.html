@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Prototype – Fiche Bilan PSE (priorisé)</title>
+  <title>Prototype – Fiche Bilan OCDE </title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Manifest PWA -->
   <link rel="manifest" href="manifest.webmanifest">
@@ -418,7 +418,7 @@
     <!-- Écran 2 : Fonctions vitales -->
     <div id="s2" class="screen">
       <fieldset>
-        <legend>Fonctions vitales (C / V / R)</legend>
+        <legend>Fonctions vitales </legend>
 
         <!-- Conscience -->
         <fieldset>
@@ -1001,7 +1001,7 @@
 
     const status = document.getElementById('statusMode');
     status.textContent = navigator.onLine
-      ? 'Mode en ligne (aucune IA utilisée)'
+      ? 'Mode en ligne '
       : 'Mode hors ligne';
 
     document.querySelectorAll('textarea, input[type="text"]').forEach(el => {
@@ -1573,6 +1573,89 @@
   ];
 
   champs.forEach(attachAutocomplete);
+})();
+</script>
+<script>
+(function() {
+  const STORAGE_KEY = "fiche_pse_state_v1";
+
+  // Fonction pour récupérer l'état sauvegardé
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return {};
+      return JSON.parse(raw);
+    } catch (e) {
+      console.warn("Impossible de charger l'état local:", e);
+      return {};
+    }
+  }
+
+  // Fonction pour sauvegarder l'état
+  function saveState(state) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {
+      console.warn("Impossible de sauvegarder l'état local:", e);
+    }
+  }
+
+  // Récupère tous les champs pertinents
+  const fields = Array.from(document.querySelectorAll(
+    "input[name], textarea[name], select[name]"
+  ));
+
+  // Charger les valeurs au démarrage
+  const saved = loadState();
+  fields.forEach(el => {
+    const name = el.name;
+    if (!name) return;
+    if (saved.hasOwnProperty(name)) {
+      if (el.type === "checkbox" || el.type === "radio") {
+        el.checked = !!saved[name];
+      } else {
+        el.value = saved[name];
+      }
+    }
+  });
+
+  // Écouter les changements et sauvegarder
+  function snapshot() {
+    const state = {};
+    fields.forEach(el => {
+      const name = el.name;
+      if (!name) return;
+      if (el.type === "checkbox" || el.type === "radio") {
+        state[name + ":" + (el.value || "on")] = el.checked;
+      } else {
+        state[name] = el.value;
+      }
+    });
+    saveState(state);
+  }
+
+  // Pour recharger correctement les groupes de checkbox/radio
+  (function reloadCheckboxRadio() {
+    const state = saved;
+    Object.keys(state || {}).forEach(key => {
+      if (!key.includes(":")) return;
+      const [name, val] = key.split(":");
+      const el = document.querySelector(
+        'input[name="' + name + '"][value="' + val + '"]'
+      );
+      if (el) {
+        el.checked = !!state[key];
+      }
+    });
+  })();
+
+  fields.forEach(el => {
+    el.addEventListener("input", snapshot);
+    el.addEventListener("change", snapshot);
+  });
+
+  // Sauvegarde aussi avant fermeture / rafraîchissement
+  window.addEventListener("beforeunload", snapshot);
 })();
 </script>
 
