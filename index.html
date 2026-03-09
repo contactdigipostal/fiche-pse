@@ -1189,5 +1189,392 @@
     });
   }
 </script>
+<script>
+(async function() {
+  const VOCAB_URL = "vocabulaire-pse.json";
+
+  let vocab = [];
+  try {
+    const resp = await fetch(VOCAB_URL);
+    if (resp.ok) {
+      const data = await resp.json();
+      vocab = data.terms || [];
+      console.log("Vocab PSE chargé :", vocab.length, "termes");
+    } else {
+      console.warn("Impossible de charger le vocabulaire PSE");
+    }
+  } catch (e) {
+    console.error("Erreur chargement vocabulaire PSE:", e);
+  }
+
+  if (!vocab.length) return;
+
+  function normalize(str) {
+    return str
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim();
+  }
+
+  function attachAutocomplete(textInput) {
+    // Ne pas activer sur les champs purement numériques
+    if (textInput.type === "number" || textInput.type === "date" || textInput.type === "time") {
+      return;
+    }
+
+    const wrapper = document.createElement("div");
+    wrapper.style.position = "relative";
+    textInput.parentNode.insertBefore(wrapper, textInput);
+    wrapper.appendChild(textInput);
+
+    const list = document.createElement("div");
+    list.style.position = "absolute";
+    list.style.left = "0";
+    list.style.right = "0";
+    list.style.zIndex = "9999";
+    list.style.background = "white";
+    list.style.border = "1px solid #ccc";
+    list.style.maxHeight = "150px";
+    list.style.overflowY = "auto";
+    list.style.fontSize = "0.85rem";
+    list.style.display = "none";
+    list.style.boxShadow = "0 2px 4px rgba(0,0,0,0.15)";
+    wrapper.appendChild(list);
+
+    function showSuggestions(suggestions) {
+      list.innerHTML = "";
+      if (!suggestions.length) {
+        list.style.display = "none";
+        return;
+      }
+      suggestions.slice(0, 10).forEach(term => {
+        const item = document.createElement("div");
+        item.textContent = term;
+        item.style.padding = "4px 6px";
+        item.style.cursor = "pointer";
+        item.addEventListener("mousedown", (e) => {
+          e.preventDefault();
+          insertSuggestion(term);
+        });
+        list.appendChild(item);
+      });
+      list.style.display = "block";
+    }
+
+    function insertSuggestion(term) {
+      const value = textInput.value;
+      const cursor = textInput.selectionStart || value.length;
+      const before = value.slice(0, cursor);
+      const after = value.slice(cursor);
+
+      const match = before.match(/(.+?\b)?(\S*)$/);
+      let prefix = "";
+      if (match) {
+        prefix = match[1] || "";
+      }
+      const newValue = prefix + term + " " + after;
+      textInput.value = newValue;
+      const newCursor = (prefix + term + " ").length;
+      if (textInput.setSelectionRange) {
+        textInput.setSelectionRange(newCursor, newCursor);
+      }
+      list.style.display = "none";
+      textInput.focus();
+    }
+
+    function handleInput() {
+      const value = textInput.value;
+      const cursor = textInput.selectionStart || value.length;
+      const before = value.slice(0, cursor);
+      const fragmentMatch = before.match(/(\S+)$/);
+      const fragment = fragmentMatch ? fragmentMatch[1] : "";
+      const fragNorm = normalize(fragment);
+
+      if (!fragNorm || fragNorm.length < 2) {
+        list.style.display = "none";
+        return;
+      }
+
+      const suggestions = vocab.filter(term =>
+        normalize(term).startsWith(fragNorm)
+      );
+      showSuggestions(suggestions);
+    }
+
+    textInput.addEventListener("input", handleInput);
+    textInput.addEventListener("click", handleInput);
+    textInput.addEventListener("blur", () => {
+      setTimeout(() => { list.style.display = "none"; }, 200);
+    });
+  }
+
+  // Sélection de tous les champs libres à texte
+  const textInputs = Array.from(document.querySelectorAll(
+    'input[type="text"], input[type="tel"], textarea'
+  ));
+
+  textInputs.forEach(attachAutocomplete);
+})();
+</script>
+<script>
+(async function() {
+  const VOCAB_URL = "vocabulaire-pse.json";
+
+  let vocab = [];
+  try {
+    const resp = await fetch(VOCAB_URL);
+    if (resp.ok) {
+      const data = await resp.json();
+      vocab = data.terms || [];
+      console.log("Vocab PSE chargé :", vocab.length, "termes");
+    } else {
+      console.warn("Impossible de charger le vocabulaire PSE");
+    }
+  } catch (e) {
+    console.error("Erreur chargement vocabulaire PSE:", e);
+  }
+
+  if (!vocab.length) return;
+
+  function normalize(str) {
+    return str
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim();
+  }
+
+  function attachAutocomplete(textInput) {
+    if (!textInput) return;
+
+    const wrapper = document.createElement("div");
+    wrapper.style.position = "relative";
+    textInput.parentNode.insertBefore(wrapper, textInput);
+    wrapper.appendChild(textInput);
+
+    const list = document.createElement("div");
+    list.style.position = "absolute";
+    list.style.left = "0";
+    list.style.right = "0";
+    list.style.zIndex = "9999";
+    list.style.background = "white";
+    list.style.border = "1px solid #ccc";
+    list.style.maxHeight = "150px";
+    list.style.overflowY = "auto";
+    list.style.fontSize = "0.85rem";
+    list.style.display = "none";
+    list.style.boxShadow = "0 2px 4px rgba(0,0,0,0.15)";
+    wrapper.appendChild(list);
+
+    function showSuggestions(suggestions) {
+      list.innerHTML = "";
+      if (!suggestions.length) {
+        list.style.display = "none";
+        return;
+      }
+      suggestions.slice(0, 10).forEach(term => {
+        const item = document.createElement("div");
+        item.textContent = term;
+        item.style.padding = "4px 6px";
+        item.style.cursor = "pointer";
+        item.addEventListener("mousedown", (e) => {
+          e.preventDefault();
+          insertSuggestion(term);
+        });
+        list.appendChild(item);
+      });
+      list.style.display = "block";
+    }
+
+    function insertSuggestion(term) {
+      const value = textInput.value;
+      const cursor = textInput.selectionStart || value.length;
+      const before = value.slice(0, cursor);
+      const after = value.slice(cursor);
+
+      const match = before.match(/(.+?\b)?(\S*)$/);
+      let prefix = "";
+      if (match) {
+        prefix = match[1] || "";
+      }
+      const newValue = prefix + term + " " + after;
+      textInput.value = newValue;
+      const newCursor = (prefix + term + " ").length;
+      if (textInput.setSelectionRange) {
+        textInput.setSelectionRange(newCursor, newCursor);
+      }
+      list.style.display = "none";
+      textInput.focus();
+    }
+
+    function handleInput() {
+      const value = textInput.value;
+      const cursor = textInput.selectionStart || value.length;
+      const before = value.slice(0, cursor);
+      const fragmentMatch = before.match(/(\S+)$/);
+      const fragment = fragmentMatch ? fragmentMatch[1] : "";
+      const fragNorm = normalize(fragment);
+
+      if (!fragNorm || fragNorm.length < 2) {
+        list.style.display = "none";
+        return;
+      }
+
+      const suggestions = vocab.filter(term =>
+        normalize(term).startsWith(fragNorm)
+      );
+      showSuggestions(suggestions);
+    }
+
+    textInput.addEventListener("input", handleInput);
+    textInput.addEventListener("click", handleInput);
+    textInput.addEventListener("blur", () => {
+      setTimeout(() => { list.style.display = "none"; }, 200);
+    });
+  }
+
+  // Activer uniquement sur ces champs
+  const champs = [
+    document.querySelector('textarea[name="circonstances"]'),
+    document.querySelector('textarea[name="blessures_signes"]'),
+    document.querySelector('textarea[name="antecedents"]'),
+    document.querySelector('textarea[name="traitements"]'),
+    document.querySelector('textarea[name="gestes_realises"]'),
+  ];
+
+  champs.forEach(attachAutocomplete);
+})();
+</script>
+<script>
+(async function() {
+  const VOCAB_URL = "vocabulaire-pse.json";
+
+  let vocab = [];
+  try {
+    const resp = await fetch(VOCAB_URL);
+    if (resp.ok) {
+      const data = await resp.json();
+      vocab = data.terms || [];
+      console.log("Vocab PSE chargé :", vocab.length, "termes");
+    } else {
+      console.warn("Impossible de charger le vocabulaire PSE");
+    }
+  } catch (e) {
+    console.error("Erreur chargement vocabulaire PSE:", e);
+  }
+
+  if (!vocab.length) return;
+
+  function normalize(str) {
+    return str
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim();
+  }
+
+  function attachAutocomplete(textInput) {
+    if (!textInput) return;
+
+    const wrapper = document.createElement("div");
+    wrapper.style.position = "relative";
+    textInput.parentNode.insertBefore(wrapper, textInput);
+    wrapper.appendChild(textInput);
+
+    const list = document.createElement("div");
+    list.style.position = "absolute";
+    list.style.left = "0";
+    list.style.right = "0";
+    list.style.zIndex = "9999";
+    list.style.background = "white";
+    list.style.border = "1px solid #ccc";
+    list.style.maxHeight = "150px";
+    list.style.overflowY = "auto";
+    list.style.fontSize = "0.85rem";
+    list.style.display = "none";
+    list.style.boxShadow = "0 2px 4px rgba(0,0,0,0.15)";
+    wrapper.appendChild(list);
+
+    function showSuggestions(suggestions) {
+      list.innerHTML = "";
+      if (!suggestions.length) {
+        list.style.display = "none";
+        return;
+      }
+      suggestions.slice(0, 10).forEach(term => {
+        const item = document.createElement("div");
+        item.textContent = term;
+        item.style.padding = "4px 6px";
+        item.style.cursor = "pointer";
+        item.addEventListener("mousedown", (e) => {
+          e.preventDefault();
+          insertSuggestion(term);
+        });
+        list.appendChild(item);
+      });
+      list.style.display = "block";
+    }
+
+    function insertSuggestion(term) {
+      const value = textInput.value;
+      const cursor = textInput.selectionStart || value.length;
+      const before = value.slice(0, cursor);
+      const after = value.slice(cursor);
+
+      const match = before.match(/(.+?\b)?(\S*)$/);
+      let prefix = "";
+      if (match) {
+        prefix = match[1] || "";
+      }
+      const newValue = prefix + term + " " + after;
+      textInput.value = newValue;
+      const newCursor = (prefix + term + " ").length;
+      if (textInput.setSelectionRange) {
+        textInput.setSelectionRange(newCursor, newCursor);
+      }
+      list.style.display = "none";
+      textInput.focus();
+    }
+
+    function handleInput() {
+      const value = textInput.value;
+      const cursor = textInput.selectionStart || value.length;
+      const before = value.slice(0, cursor);
+      const fragmentMatch = before.match(/(\S+)$/);
+      const fragment = fragmentMatch ? fragmentMatch[1] : "";
+      const fragNorm = normalize(fragment);
+
+      if (!fragNorm || fragNorm.length < 2) {
+        list.style.display = "none";
+        return;
+      }
+
+      const suggestions = vocab.filter(term =>
+        normalize(term).startsWith(fragNorm)
+      );
+      showSuggestions(suggestions);
+    }
+
+    textInput.addEventListener("input", handleInput);
+    textInput.addEventListener("click", handleInput);
+    textInput.addEventListener("blur", () => {
+      setTimeout(() => { list.style.display = "none"; }, 200);
+    });
+  }
+
+  // Activer uniquement sur ces champs
+  const champs = [
+    document.querySelector('textarea[name="circonstances"]'),
+    document.querySelector('textarea[name="blessures_signes"]'),
+    document.querySelector('textarea[name="antecedents"]'),
+    document.querySelector('textarea[name="traitements"]'),
+    document.querySelector('textarea[name="gestes_realises"]'),
+  ];
+
+  champs.forEach(attachAutocomplete);
+})();
+</script>
+
 </body>
 </html>
