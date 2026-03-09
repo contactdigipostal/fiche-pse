@@ -272,7 +272,7 @@
 </head>
 <body>
 <header>
-  <h1>Fiche Bilan PSE – Prototype priorisé</h1>
+  <h1>Fiche Bilan OCDE </h1>
   <span id="statusMode">Mode hors ligne</span>
 </header>
 
@@ -281,7 +281,7 @@
   <div class="tabs">
     <button class="tab active" data-screen="s0">0. Identité</button>
     <button class="tab" data-screen="s1">1. Circonstances & signes</button>
-    <button class="tab" data-screen="s2">2. Fonctions vitales (C/V/R)</button>
+    <button class="tab" data-screen="s2">2. Fonctions vitales</button>
     <button class="tab" data-screen="s3">3. Antécédents & traitements</button>
     <button class="tab" data-screen="s4">4. Gestes & transmission</button>
   </div>
@@ -782,7 +782,7 @@
 
     <div class="r-2cols">
       <div class="r-bloc" style="height: 75mm;">
-        <div class="r-titre">3. Fonctions vitales (C/V/R)</div>
+        <div class="r-titre">3. Fonctions vitales</div>
         <div class="r-petit" id="r_fonctions" style="white-space: pre-wrap;"></div>
       </div>
       <div class="r-bloc" style="height: 75mm;">
@@ -1655,6 +1655,86 @@
   });
 
   // Sauvegarde aussi avant fermeture / rafraîchissement
+  window.addEventListener("beforeunload", snapshot);
+})();
+</script>
+<script>
+(function() {
+  const STORAGE_KEY = "fiche_pse_state_v1";
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return {};
+      return JSON.parse(raw);
+    } catch (e) {
+      console.warn("Impossible de charger l'état local:", e);
+      return {};
+    }
+  }
+
+  function saveState(state) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {
+      console.warn("Impossible de sauvegarder l'état local:", e);
+    }
+  }
+
+  const fields = Array.from(document.querySelectorAll(
+    "input[name], textarea[name], select[name]"
+  ));
+
+  const saved = loadState();
+
+  // Recharger les champs simples (texte, nombre, date, select)
+  fields.forEach(el => {
+    const name = el.name;
+    if (!name) return;
+
+    if (el.type === "checkbox" || el.type === "radio") {
+      // on gère ces cas plus bas
+      return;
+    }
+
+    if (saved.hasOwnProperty(name)) {
+      el.value = saved[name];
+    }
+  });
+
+  // Recharger les checkbox/radio
+  Object.keys(saved || {}).forEach(key => {
+    if (!key.includes(":")) return;
+    const [name, val] = key.split(":");
+    const el = document.querySelector(
+      'input[name="' + name + '"][value="' + val + '"]'
+    );
+    if (el) {
+      el.checked = !!saved[key];
+    }
+  });
+
+  function snapshot() {
+    const state = {};
+    fields.forEach(el => {
+      const name = el.name;
+      if (!name) return;
+
+      if (el.type === "checkbox" || el.type === "radio") {
+        const key = name + ":" + (el.value || "on");
+        state[key] = el.checked;
+      } else {
+        state[name] = el.value;
+      }
+    });
+    saveState(state);
+  }
+
+  fields.forEach(el => {
+    el.addEventListener("input", snapshot);
+    el.addEventListener("change", snapshot);
+  });
+
   window.addEventListener("beforeunload", snapshot);
 })();
 </script>
